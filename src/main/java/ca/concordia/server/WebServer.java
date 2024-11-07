@@ -13,7 +13,7 @@ public class WebServer {
 
     public void start() throws java.io.IOException{
         //Create a server socket
-        ServerSocket serverSocket = new ServerSocket(5000);
+        ServerSocket serverSocket = new ServerSocket(5001);
         while(true){
             System.out.println("Waiting for a client to connect...");
             //Accept a connection from a client
