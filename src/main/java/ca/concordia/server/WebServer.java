@@ -7,35 +7,61 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLDecoder;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 //create the WebServer class to receive connections on port 5000. Each connection is handled by a master thread that puts the descriptor in a bounded buffer. A pool of worker threads take jobs from this buffer if there are any to handle the connection.
 public class WebServer {
 
+    private static final int threadPoolSize = 10; // number of worker threads
+    private static final int queueCapacity = 100; // bounded buffer size for connections
+    private final ExecutorService threadPool;
+    private final BlockingQueue<Socket> connectionQueue;
+
+    public WebServer() {
+        threadPool = Executors.newFixedThreadPool(threadPoolSize);
+        connectionQueue = new ArrayBlockingQueue<>(queueCapacity);
+    }
+
     public void start() throws java.io.IOException{
         //Create a server socket
         ServerSocket serverSocket = new ServerSocket(5000);
+
+        // start worker threads to process connections from the queue
+        for (int i=0; i < threadPoolSize; i++) {
+            threadPool.execute(new Worker());
+        }
+
         while(true){
             System.out.println("Waiting for a client to connect...");
             //Accept a connection from a client
             Socket clientSocket = serverSocket.accept();
             System.out.println("New client...");
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            OutputStream out = clientSocket.getOutputStream();
 
-            String request = in.readLine();
-            if (request != null) {
-                if (request.startsWith("GET")) {
-                    // Handle GET request
-                    handleGetRequest(out);
-                } else if (request.startsWith("POST")) {
-                    // Handle POST request
-                    handlePostRequest(in, out);
-                }
-            }
+            // place the client socket in queue
+            connectionQueue.put(clientSocket);
 
-            in.close();
-            out.close();
-            clientSocket.close();
+
+
+            // BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            // OutputStream out = clientSocket.getOutputStream();
+
+            // String request = in.readLine();
+            // if (request != null) {
+            //     if (request.startsWith("GET")) {
+            //         // Handle GET request
+            //         handleGetRequest(out);
+            //     } else if (request.startsWith("POST")) {
+            //         // Handle POST request
+            //         handlePostRequest(in, out);
+            //     }
+            // }
+
+            // in.close();
+            // out.close();
+            // clientSocket.close();
         }
     }
 
