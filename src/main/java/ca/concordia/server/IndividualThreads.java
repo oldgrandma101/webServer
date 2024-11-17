@@ -8,11 +8,14 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.util.concurrent.ArrayBlockingQueue;
 
+
 public class IndividualThreads implements Runnable{
     private ArrayBlockingQueue<Socket> requests;
+    private Bank bank; 
 
     public IndividualThreads(ArrayBlockingQueue<Socket> requests) {
         this.requests = requests;
+        this.bank = bank;
 
     }
 
@@ -53,7 +56,7 @@ public class IndividualThreads implements Runnable{
 
         in.close();
         out.close();
-
+        //clientSocket.close();
 
     }//end of handle client
 
@@ -138,6 +141,7 @@ public class IndividualThreads implements Runnable{
             }
         }
 
+    
         // Create the response
         String responseContent = "<html><body><h1>Thank you for using Concordia Transfers</h1>" +
                 "<h2>Received Form Inputs:</h2>"+
@@ -146,7 +150,9 @@ public class IndividualThreads implements Runnable{
                 "<p>To Account: " + toAccount + "</p>" +
                 "<p>To Value: " + toValue + "</p>" +
                 "</body></html>";
-
+    
+        
+                
         // Respond with the received form inputs
         String response = "HTTP/1.1 200 OK\r\n" +
                 "Content-Length: " + responseContent.length() + "\r\n" +

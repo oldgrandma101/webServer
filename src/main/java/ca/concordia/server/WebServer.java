@@ -1,13 +1,12 @@
 package ca.concordia.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URLDecoder;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 //create the WebServer class to receive connections on port 5000. Each connection is handled by a master thread that puts the descriptor in a bounded buffer. A pool of worker threads take jobs from this buffer if there are any to handle the connection.
 public class WebServer {
@@ -15,11 +14,18 @@ public class WebServer {
     //need to add attributes to WebServer for thread pools (number of threads in pool and the queue to hold extra tasks
     private ExecutorService threadPool;
     private ArrayBlockingQueue<Socket> requests;
+    private Bank bank; //instantiate bank 
+
 
     //also need to make a constructor to initialize attributes
     public WebServer(int poolSize, int queueSize) {
         threadPool = Executors.newFixedThreadPool(poolSize);
         requests = new ArrayBlockingQueue<> (queueSize);
+
+        bank = new Bank(); //initialize bank
+        
+
+        bank.initializeAccounts(accountsFile); //initialize accounts with their respective parameters
 
         // Start IndividualThreads
         for (int i = 0; i < poolSize; i++) {
@@ -45,13 +51,17 @@ public class WebServer {
         }
     }
 
-
-
-
-
     public static void main(String[] args) {
+    //accounts file arg
+    if (args.length < 1){
+        System.err.println("Pass the accounts file by using: java.ca.concorda.server.WebServer <accountsFile>");
+        return;
+    }
+
+    String accountsFile = args[0]; //get file path from terminal
+
         //Start the server, if an exception occurs, print the stack trace
-        WebServer server = new WebServer(1000, 1000);
+        WebServer server = new WebServer(1000, 1000, accountsFile);
         try {
             server.start();
         } catch (IOException e) {
