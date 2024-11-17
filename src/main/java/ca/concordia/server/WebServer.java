@@ -25,7 +25,7 @@ public class WebServer {
         bank = new Bank(); //initialize bank
         
 
-        bank.initializeAccounts(accountsFile); //initialize accounts with their respective parameters
+        bank.initializeAccounts("target\\classes\\accounts.txt"); //initialize accounts with their respective parameters
 
         // Start IndividualThreads
         for (int i = 0; i < poolSize; i++) {
@@ -52,16 +52,8 @@ public class WebServer {
     }
 
     public static void main(String[] args) {
-    //accounts file arg
-    if (args.length < 1){
-        System.err.println("Pass the accounts file by using: java.ca.concorda.server.WebServer <accountsFile>");
-        return;
-    }
-
-    String accountsFile = args[0]; //get file path from terminal
-
         //Start the server, if an exception occurs, print the stack trace
-        WebServer server = new WebServer(1000, 1000, accountsFile);
+        WebServer server = new WebServer(1000, 1000);
         try {
             server.start();
         } catch (IOException e) {

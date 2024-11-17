@@ -9,7 +9,7 @@ public class Bank {
     private final ConcurrentHashMap<Integer, Account> accounts = new ConcurrentHashMap<>();
 
     public void initializeAccounts(String filename) {
-        //load accounts from file
+        //load accounts ids and balances from accounts.txt file
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
