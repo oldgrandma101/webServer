@@ -142,17 +142,28 @@ public class IndividualThreads implements Runnable{
                 }
                 
             }
-               
-            boolean success = bank.transfer(account, toAccount, value);
 
-        // Create the response
-        String responseContent = "<html><body><h1>Thank you for using Concordia Transfers</h1>" +
-                "<h2>Received Form Inputs:</h2>"+
-                "<p>Account: " + account + "</p>" +
-                "<p>Value: " + value + "</p>" +
-                "<p>To Account: " + toAccount + "</p>" +
-                "<p>To Value: " + toValue + "</p>" +
-                "</body></html>";
+        boolean success = bank.transfer(account, toAccount, value);
+        String responseContent;
+
+        if(success) {
+            // Create the response
+            responseContent = "<html><body><h1>Thank you for using Concordia Transfers</h1>" +
+                    "<h2>Received Form Inputs:</h2>" +
+                    "<p>Account: " + account + "</p>" +
+                    "<p>Value: " + value + "</p>" +
+                    "<p>To Account: " + toAccount + "</p>" +
+                    "<p>To Value: " + toValue + "</p>" +
+                    "</body></html>";
+        }else
+        {
+            //send response to website
+            responseContent = "<html><body><h1>Thank you for using Concordia Transfers</h1>" +
+                    "<h2>Transfer Failed</h2>" +
+                    "<p>There was an issue processing your transfer.</p>" +
+                    "<p>Please check the account details or try again later.</p>" +
+                    "</body></html>";
+        }
     
         
                 

@@ -83,9 +83,9 @@ public class SimpleWebClientDeadlock implements Runnable {
             Thread thread2 = new Thread(new SimpleWebClientDeadlock(354, 114));
 
             thread.start();
-            Thread.sleep(20);
+            Thread.sleep(20);   //stops socket connection errors
             thread2.start();
-            Thread.sleep(20);
+            Thread.sleep(20);   //stops socket connection errors
         }
     }
 }

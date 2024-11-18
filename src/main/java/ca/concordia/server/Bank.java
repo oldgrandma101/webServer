@@ -13,6 +13,9 @@ public class Bank {
     public Bank(String filename) {
         this.filename = filename;
     }
+    public ConcurrentHashMap<Integer, Account> getAccounts() {
+        return accounts;
+    }
 
     @SuppressWarnings("CallToPrintStackTrace")
     public void initializeAccounts(String filename) {
@@ -75,8 +78,8 @@ public class Bank {
             // writeSemaphore.release();
 
             System.out.println("Transfer of: " + amount + "$ from: " + sourceId + " to " + destinationId + " successful!");
-            System.out.println("Your account balance is now: " + source.getBalance());
-            System.out.println("Receiver's balance is now: " + destination.getBalance());
+            System.out.println("Your account balance in "+ sourceId +" is now: " + source.getBalance());
+            System.out.println("Receiver's balance ("+ destinationId +") is now: " + destination.getBalance());
             return true;
 
         } catch(InterruptedException e) {

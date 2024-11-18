@@ -48,7 +48,12 @@ public class WebServer {
     }
     @SuppressWarnings("CallToPrintStackTrace")
     public static void main(String[] args) {
-        String accountsFile = "src\\main\\resources\\accounts.txt";
+        //for windows
+        //String accountsFile = "src\\main\\resources\\accounts.txt";
+        //for mac
+        String accountsFile = "../../../../" +
+                "resources/accounts.txt";
+
         Bank bank = new Bank(accountsFile);
         bank.initializeAccounts(accountsFile);
 
