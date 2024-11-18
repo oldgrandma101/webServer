@@ -41,34 +41,32 @@ public class Bank {
         Account source = accounts.get(sourceId);
         Account destination = accounts.get(destinationId);
 
-        if (source == null || destination == null || source.getBalance() < amount || sourceId == destinationId
-                || amount == 0) { //invalid transfer of funds
-            System.out.println("Transfer of: " + amount + "$ from: " + sourceId + " to " + destinationId + " unsuccessful!");
-
-            return false;
-        }
-
-
-        //synchronization to prevent deadlock
+        // Synchronization to prevent deadlock by making sure the semaphores are locked in the same order in each thread
         Account lockSource = sourceId < destinationId ? source : destination;
         Account lockDestination = sourceId < destinationId ? destination : source;
 
         try {
-            //get semaphores for source and destination accounts
+            // Get semaphores for source and destination accounts
             lockSource.getSemaphore().acquire();
             lockDestination.getSemaphore().acquire();
-            
-            //transfer funds
+
+            if (source == null || destination == null || source.getBalance() < amount || sourceId == destinationId || amount == 0) {
+                // Invalid transfer of funds
+                System.out.println("Transfer of: " + amount + "$ from: " + sourceId + " to " + destinationId + " unsuccessful!");
+                return false;
+            }
+
+            // Transfer funds
             source.withdraw(amount);
             destination.deposit(amount);
 
-            //print results in terminal
+            // Print results in terminal
             System.out.println("Transfer of: " + amount + "$ from: " + sourceId + " to " + destinationId + " successful!");
-            System.out.println("Your account balance in "+ sourceId +" is now: " + source.getBalance());
-            System.out.println("Receiver's balance ("+ destinationId +") is now: " + destination.getBalance());
+            System.out.println("Your account balance in " + sourceId + " is now: " + source.getBalance());
+            System.out.println("Receiver's balance (" + destinationId + ") is now: " + destination.getBalance());
             return true;
 
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace();
             return false;
@@ -77,4 +75,5 @@ public class Bank {
             lockSource.getSemaphore().release();
         }
     }
+
 }
