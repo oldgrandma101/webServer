@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 public class Account {
     //represent a bank account with a balance and withdraw and deposit methods
     private int balance;
-    private int id;
+    private final int id;
     private final Semaphore semaphore = new Semaphore(1); //mutex
 
     public Account(int balance, int id){

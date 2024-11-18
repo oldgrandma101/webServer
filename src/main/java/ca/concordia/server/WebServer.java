@@ -12,24 +12,20 @@ import java.util.concurrent.Executors;
 public class WebServer {
 
     //need to add attributes to WebServer for thread pools (number of threads in pool and the queue to hold extra tasks
-    private ExecutorService threadPool;
-    private ArrayBlockingQueue<Socket> requests;
-    private Bank bank; //instantiate bank 
+    private final ExecutorService threadPool;
+    private final ArrayBlockingQueue<Socket> requests;
+    private final Bank bank;
 
 
     //also need to make a constructor to initialize attributes
-    public WebServer(int poolSize, int queueSize) {
-        threadPool = Executors.newFixedThreadPool(poolSize);
-        requests = new ArrayBlockingQueue<> (queueSize);
-
-        bank = new Bank(); //initialize bank
-        
-
-        bank.initializeAccounts("target\\classes\\accounts.txt"); //initialize accounts with their respective parameters
+    public WebServer(int poolSize, int queueSize, Bank bank) {
+        this.threadPool = Executors.newFixedThreadPool(poolSize);
+        this.requests = new ArrayBlockingQueue<> (queueSize);
+        this.bank = bank;
 
         // Start IndividualThreads
         for (int i = 0; i < poolSize; i++) {
-            threadPool.execute(new IndividualThreads(requests));
+            threadPool.execute(new IndividualThreads(requests,bank));
         }
     }
 
@@ -50,10 +46,13 @@ public class WebServer {
             }
         }
     }
-
+    @SuppressWarnings("CallToPrintStackTrace")
     public static void main(String[] args) {
-        //Start the server, if an exception occurs, print the stack trace
-        WebServer server = new WebServer(1000, 1000);
+        String accountsFile = "src\\main\\resources\\accounts.txt";
+        Bank bank = new Bank(accountsFile);
+        bank.initializeAccounts(accountsFile);
+
+        WebServer server = new WebServer(1000, 1000, bank);
         try {
             server.start();
         } catch (IOException e) {
@@ -61,4 +60,3 @@ public class WebServer {
         }
     }
 }
-
