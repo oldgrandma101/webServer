@@ -35,28 +35,14 @@ public class Bank {
 
     }
 
-    // @SuppressWarnings("CallToPrintStackTrace")
-    // private void writeToAccountsFile() {
-    //         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-    //             for (Account account : accounts.values()) {
-    //                 writer.write(account.getId() + "," + account.getBalance());
-    //                 writer.newLine();
-    //             }
-    //             System.out.println("Accounts file updated successfully");
-    //         } catch (IOException e) {
-    //             e.printStackTrace();
-    //             System.err.println("Failed to update accounts file");
-    //         }
-    //     }
-
-
 
     @SuppressWarnings("CallToPrintStackTrace")
     public boolean transfer(int sourceId, int destinationId, int amount) {
         Account source = accounts.get(sourceId);
         Account destination = accounts.get(destinationId);
 
-        if (source == null || destination == null || source.getBalance() < amount || sourceId == destinationId) { //invalid transfer of funds
+        if (source == null || destination == null || source.getBalance() < amount || sourceId == destinationId
+                || amount == 0) { //invalid transfer of funds
             System.out.println("Transfer of: " + amount + "$ from: " + sourceId + " to " + destinationId + " unsuccessful!");
 
             return false;
@@ -76,10 +62,7 @@ public class Bank {
             source.withdraw(amount);
             destination.deposit(amount);
 
-            // writeSemaphore.acquire();
-            // writeToAccountsFile();
-            // writeSemaphore.release();
-
+            //print results in terminal
             System.out.println("Transfer of: " + amount + "$ from: " + sourceId + " to " + destinationId + " successful!");
             System.out.println("Your account balance in "+ sourceId +" is now: " + source.getBalance());
             System.out.println("Receiver's balance ("+ destinationId +") is now: " + destination.getBalance());
