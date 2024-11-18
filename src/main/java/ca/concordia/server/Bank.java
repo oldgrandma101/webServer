@@ -35,6 +35,21 @@ public class Bank {
 
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
+    private void writeToAccountsFile() {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+                for (Account account : accounts.values()) {
+                    writer.write(account.getId() + "," + account.getBalance());
+                    writer.newLine();
+                }
+                System.out.println("Accounts file updated successfully");
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("Failed to update accounts file");
+            }
+        }
+
+
 
     @SuppressWarnings("CallToPrintStackTrace")
     public boolean transfer(int sourceId, int destinationId, int amount) {
@@ -58,11 +73,13 @@ public class Bank {
             source.withdraw(amount);
             destination.deposit(amount);
 
+            writeSemaphore.acquire();
             writeToAccountsFile();
+            writeSemaphore.release();
 
-            System.out.println("Transfer of: $" + amount + "from: " + sourceId + "to " + destinationId + "successful!");
+            System.out.println("Transfer of: " + amount + "$ from: " + sourceId + " to " + destinationId + " successful!");
             System.out.println("Your account balance is now: " + source.getBalance());
-            System.out.println("Receiver's balance is now:" + destination.getBalance());
+            System.out.println("Receiver's balance is now: " + destination.getBalance());
             return true;
 
         } catch(InterruptedException e) {
@@ -72,30 +89,6 @@ public class Bank {
         } finally {
             lockDestination.getSemaphore().release();
             lockSource.getSemaphore().release();
-        }
-    }
-
-    @SuppressWarnings("CallToPrintStackTrace")
-    private void writeToAccountsFile() {
-        try {
-            writeSemaphore.acquire(); // Acquire the semaphore before writing to the file
-
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-                for (Account account : accounts.values()) {
-                    writer.write(account.getId() + "," + account.getBalance());
-                    writer.newLine();
-                }
-                System.out.println("Accounts file updated successfully");
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.err.println("Failed to update accounts file");
-            }
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.err.println("File write failed");
-        } finally {
-            writeSemaphore.release(); // Release the semaphore after writing to the file
         }
     }
 }

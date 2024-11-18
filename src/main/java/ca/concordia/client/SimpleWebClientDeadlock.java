@@ -75,14 +75,17 @@ public class SimpleWebClientDeadlock implements Runnable {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         //create 1000 clients
         for(int i = 0; i < 500; i++){
             System.out.println("Creating client " + i);
-            Thread thread = new Thread(new SimpleWebClientDeadlock(123, 345));
-            Thread thread2 = new Thread(new SimpleWebClientDeadlock(345, 123));
+            Thread thread = new Thread(new SimpleWebClientDeadlock(114, 354));
+            Thread thread2 = new Thread(new SimpleWebClientDeadlock(354, 114));
+
             thread.start();
+            Thread.sleep(20);
             thread2.start();
+            Thread.sleep(20);
         }
     }
 }

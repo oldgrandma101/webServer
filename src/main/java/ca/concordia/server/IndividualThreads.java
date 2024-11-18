@@ -56,7 +56,7 @@ public class IndividualThreads implements Runnable{
     
             in.close();
             out.close();
-            //clientSocket.close();
+        
     
         }//end of handle client
     
