@@ -79,8 +79,8 @@ public class SimpleWebClientDeadlock implements Runnable {
         //create 1000 clients
         for(int i = 0; i < 500; i++){
             System.out.println("Creating client " + i);
-            Thread thread = new Thread(new SimpleWebClientDeadlock(114, 114));
-            Thread thread2 = new Thread(new SimpleWebClientDeadlock(354, 354));
+            Thread thread = new Thread(new SimpleWebClientDeadlock(114, 354));
+            Thread thread2 = new Thread(new SimpleWebClientDeadlock(354, 114));
 
             thread.start();
             Thread.sleep(20);   //stops socket connection errors
