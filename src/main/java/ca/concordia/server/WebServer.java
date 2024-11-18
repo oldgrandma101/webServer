@@ -1,29 +1,31 @@
 package ca.concordia.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URLDecoder;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 //create the WebServer class to receive connections on port 5000. Each connection is handled by a master thread that puts the descriptor in a bounded buffer. A pool of worker threads take jobs from this buffer if there are any to handle the connection.
 public class WebServer {
 
     //need to add attributes to WebServer for thread pools (number of threads in pool and the queue to hold extra tasks
-    private ExecutorService threadPool;
-    private ArrayBlockingQueue<Socket> requests;
+    private final ExecutorService threadPool;
+    private final ArrayBlockingQueue<Socket> requests;
+    private final Bank bank;
+
 
     //also need to make a constructor to initialize attributes
-    public WebServer(int poolSize, int queueSize) {
-        threadPool = Executors.newFixedThreadPool(poolSize);
-        requests = new ArrayBlockingQueue<> (queueSize);
+    public WebServer(int poolSize, int queueSize, Bank bank) {
+        this.threadPool = Executors.newFixedThreadPool(poolSize);
+        this.requests = new ArrayBlockingQueue<> (queueSize);
+        this.bank = bank;
 
         // Start IndividualThreads
         for (int i = 0; i < poolSize; i++) {
-            threadPool.execute(new IndividualThreads(requests));
+            threadPool.execute(new IndividualThreads(requests,bank));
         }
     }
 
@@ -44,14 +46,18 @@ public class WebServer {
             }
         }
     }
-
-
-
-
-
+    @SuppressWarnings("CallToPrintStackTrace")
     public static void main(String[] args) {
-        //Start the server, if an exception occurs, print the stack trace
-        WebServer server = new WebServer(1000, 1000);
+        //for windows
+        //String accountsFile = "src\\main\\resources\\accounts.txt";
+        //for mac
+        String accountsFile = "../../../../" +
+                "resources/accounts.txt";
+
+        Bank bank = new Bank(accountsFile);
+        bank.initializeAccounts(accountsFile);
+
+        WebServer server = new WebServer(1000, 1000, bank);
         try {
             server.start();
         } catch (IOException e) {
@@ -59,4 +65,3 @@ public class WebServer {
         }
     }
 }
-

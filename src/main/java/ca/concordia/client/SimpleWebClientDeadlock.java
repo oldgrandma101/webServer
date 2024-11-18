@@ -1,7 +1,13 @@
 package ca.concordia.client;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 public class SimpleWebClientDeadlock implements Runnable {
 
@@ -69,14 +75,17 @@ public class SimpleWebClientDeadlock implements Runnable {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         //create 1000 clients
         for(int i = 0; i < 500; i++){
             System.out.println("Creating client " + i);
-            Thread thread = new Thread(new SimpleWebClientDeadlock(123, 345));
-            Thread thread2 = new Thread(new SimpleWebClientDeadlock(345, 123));
+            Thread thread = new Thread(new SimpleWebClientDeadlock(114, 114));
+            Thread thread2 = new Thread(new SimpleWebClientDeadlock(354, 354));
+
             thread.start();
+            Thread.sleep(20);   //stops socket connection errors
             thread2.start();
+            Thread.sleep(20);   //stops socket connection errors
         }
     }
 }
