@@ -56,9 +56,12 @@ public class Bank {
         Account source = accounts.get(sourceId);
         Account destination = accounts.get(destinationId);
 
-        if (source == null || destination == null || source.getBalance() < amount) { //invalid transfer of funds
+        if (source == null || destination == null || source.getBalance() < amount || sourceId == destinationId) { //invalid transfer of funds
+            System.out.println("Transfer of: " + amount + "$ from: " + sourceId + " to " + destinationId + " unsuccessful!");
+
             return false;
         }
+
 
         //synchronization to prevent deadlock
         Account lockSource = sourceId < destinationId ? source : destination;

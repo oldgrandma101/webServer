@@ -24,7 +24,7 @@ public class SimpleWebClient {
 
             // Prepare the POST request with form data
             String postData = "account="+args[0]+"&value="+args[1]+"&toAccount="+args[2]+"&toValue="+args[3];
-            Thread.sleep(60000);
+//            Thread.sleep(60000);
             // Send the POST request
             writer.println("POST /submit HTTP/1.1");
             writer.println("Host: localhost:8080");
@@ -51,8 +51,9 @@ public class SimpleWebClient {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }catch(InterruptedException e){
-            e.printStackTrace();
         }
+//        catch(InterruptedException e){
+//            e.printStackTrace();
+//        }
     }
 }
