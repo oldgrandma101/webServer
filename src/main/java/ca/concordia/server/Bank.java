@@ -1,16 +1,13 @@
 package ca.concordia.server;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
 
 public class Bank {
     private final ConcurrentHashMap<Integer, Account> accounts = new ConcurrentHashMap<>();
-    private final Semaphore writeSemaphore = new Semaphore(1); //mutex for writing to accounts.txt
+    //private final Semaphore writeSemaphore = new Semaphore(1); //mutex for writing to accounts.txt
     private final String filename;
 
     public Bank(String filename) {
@@ -35,19 +32,19 @@ public class Bank {
 
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
-    private void writeToAccountsFile() {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-                for (Account account : accounts.values()) {
-                    writer.write(account.getId() + "," + account.getBalance());
-                    writer.newLine();
-                }
-                System.out.println("Accounts file updated successfully");
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.err.println("Failed to update accounts file");
-            }
-        }
+    // @SuppressWarnings("CallToPrintStackTrace")
+    // private void writeToAccountsFile() {
+    //         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+    //             for (Account account : accounts.values()) {
+    //                 writer.write(account.getId() + "," + account.getBalance());
+    //                 writer.newLine();
+    //             }
+    //             System.out.println("Accounts file updated successfully");
+    //         } catch (IOException e) {
+    //             e.printStackTrace();
+    //             System.err.println("Failed to update accounts file");
+    //         }
+    //     }
 
 
 
@@ -73,9 +70,9 @@ public class Bank {
             source.withdraw(amount);
             destination.deposit(amount);
 
-            writeSemaphore.acquire();
-            writeToAccountsFile();
-            writeSemaphore.release();
+            // writeSemaphore.acquire();
+            // writeToAccountsFile();
+            // writeSemaphore.release();
 
             System.out.println("Transfer of: " + amount + "$ from: " + sourceId + " to " + destinationId + " successful!");
             System.out.println("Your account balance is now: " + source.getBalance());
