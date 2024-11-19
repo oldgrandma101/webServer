@@ -57,7 +57,7 @@ public class WebServer {
         Bank bank = new Bank(accountsFile);
         bank.initializeAccounts(accountsFile);
 
-        WebServer server = new WebServer(1000, 1000, bank);
+        WebServer server = new WebServer(30, 1000, bank);
         try {
             server.start();
         } catch (IOException e) {
